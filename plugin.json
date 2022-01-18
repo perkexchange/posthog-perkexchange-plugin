@@ -1,5 +1,5 @@
 {
-    "name": "Perk Exchange",
+    "name": "Perk.Exchange",
     "url": "https://github.com/perkexchange/posthog-perkexchange-plugin",
     "description": "Reward users with cryptocurrency when they perform certain actions",
     "main": "index.js",
