@@ -27,8 +27,8 @@
         },
         {
             "key": "action",
-            "hint": "The name assigned to the Posthog action",
-            "name": "Action name",
+            "hint": "A comma-separated list of PostHog actions",
+            "name": "Triggering actions",
             "type": "string",
             "secret": false,
             "default": "",
