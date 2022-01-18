@@ -33,7 +33,7 @@
         },
         {
             "key": "message",
-            "hint": "Optional text to send to a user in their reward email",
+            "hint": "Optional text to send to a user in the initial reward notification email",
             "name": "Message",
             "type": "string",
             "secret": false,
