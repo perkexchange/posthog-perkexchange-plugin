@@ -33,6 +33,15 @@
             "secret": false,
             "default": "",
             "required": true
+        },
+        {
+            "key": "message",
+            "hint": "Optional text to send to a user in their reward email",
+            "name": "Message",
+            "type": "string",
+            "secret": false,
+            "default": "",
+            "required": false
         }
     ]
 }

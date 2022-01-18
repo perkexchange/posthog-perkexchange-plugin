@@ -20,7 +20,8 @@ export async function onAction(action, event, { global, storage }) {
                 body: JSON.stringify({
                     email: email,
                     amount: global.rewardAmount,
-                    notify: true
+                    notify: true,
+                    message: global.rewardMessage
                 })
             })
             if (!rewardResp.ok) {
@@ -55,6 +56,7 @@ export async function setupPlugin({ global, config }) {
     global.rewardAmount = rewardAmount
     global.campaignSecret = config.campaignSecret
     global.actionName = config.action
+    global.rewardMessage = config.message
 }
 
 function getEmailFromIdentifyEvent(event) {
