@@ -32,6 +32,15 @@
             "required": true
         },
         {
+            "key": "daily_limit",
+            "hint": "Maximum amount of KIN given to a user per day.",
+            "name": "Daily user limit",
+            "type": "string",
+            "secret": false,
+            "default": "5",
+            "required": false
+        },
+        {
             "key": "message",
             "hint": "Optional text to send to a user in the initial reward notification email",
             "name": "Message",
