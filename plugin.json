@@ -23,6 +23,15 @@
             "required": true
         },
         {
+            "key": "daily_limit",
+            "hint": "Maximum amount of KIN given to a user per day. (unlimited=0)",
+            "name": "Daily user limit",
+            "type": "string",
+            "secret": false,
+            "default": "5",
+            "required": false
+        },
+        {
             "key": "action",
             "hint": "A comma-separated list of PostHog actions",
             "name": "Triggering actions",
@@ -30,15 +39,6 @@
             "secret": false,
             "default": "",
             "required": true
-        },
-        {
-            "key": "daily_limit",
-            "hint": "Maximum amount of KIN given to a user per day.",
-            "name": "Daily user limit",
-            "type": "string",
-            "secret": false,
-            "default": "5",
-            "required": false
         },
         {
             "key": "message",

@@ -5,23 +5,28 @@ function isEmail(email) {
 }
 
 export async function onAction(action, event, { global, cache, storage }) {
-    let todayDate = Date()
+    let todayDate = new Date()
     let cacheRewardKey = `${event.distinct_id}_${todayDate.toDateString()}`
-    let todaysRewards = cache.get((key = cacheRewardKey))
+    let todaysRewards = await cache.get((key = cacheRewardKey))
     let reward = global.rewardAmount
 
     // Has the user already received rewards today?
-    if (todaysRewards && todaysRewards + reward > global.dailyLimit) reward = global.dailyLimit - todaysRewards
+    if (global.dailyLimit > 0 && todaysRewards && todaysRewards + reward > global.dailyLimit)
+        reward = global.dailyLimit - todaysRewards
+    else if (global.dailyLimit > 0 && reward > global.dailyLimit) reward = global.dailyLimit
+
+    let user = await storage.get(event.distinct_id)
+    if (!user) return
 
     // User exceeded their daily amount
-    if (reward <= 0) return
+    if (reward <= 0) {
+        console.debug(`User has already hit their daily limit: ${user.platform}/${user.id}`)
+        return
+    }
 
     let actions = global.actionName.split(',')
 
     if (actions.includes(action.name)) {
-        let user = await storage.get(event.distinct_id)
-        if (!user) return
-
         let request = {
             amount: reward,
             message: global.rewardMessage
@@ -54,10 +59,13 @@ export async function onAction(action, event, { global, cache, storage }) {
         if (!rewardResp.ok) {
             console.error(`Could not send reward to ${user.platform}/${user.id}: ${rewardResp.status}`)
         } else {
-            todaysRewards = cache.get((key = cacheRewardKey))
+            console.debug(`Send ${reward} KIN to ${user.platform}/${user.id}`)
+
+            todaysRewards = await cache.get((key = cacheRewardKey))
+            if (todaysRewards === null) todaysRewards = 0
 
             // Store today's rewards in the cache for 1 day only
-            if (todaysRewards) cache.set((key = cacheRewardKey), reward + todaysRewards, (ttlSeconds = 24 * 60 * 60))
+            await cache.set((key = cacheRewardKey), reward + todaysRewards, (ttlSeconds = 24 * 60 * 60))
         }
     }
 }
@@ -74,10 +82,10 @@ export async function setupPlugin({ global, config }) {
 
     let dailyLimit = parseInt(config.daily_limit, 10)
     if (!Number.isInteger(dailyLimit)) {
-        throw new Error('Daily limit should be a number greater than or equal to 1')
+        throw new Error('Daily limit should be a number greater than or equal to 0')
     }
-    if (dailyLimit <= 0) {
-        throw new Error('Daily limit should be greater than or equal to 1')
+    if (dailyLimit < 0) {
+        throw new Error('Daily limit should be greater than or equal to 0')
     }
 
     const invoicesResp = await fetch(`https://perk.exchange/api/invoices`, {
@@ -110,7 +118,8 @@ function getEmailFromIdentifyEvent(event) {
 function getPerkExchangeUserFromIdentifyEvent(event) {
     let user =
         !!event['$set'] && Object.keys(event['$set']).includes('perkexchange') ? event['$set']['perkexchange'] : null
-    if (Object.keys(user).includes('platform') && Object.keys(user).includes('id')) {
+
+    if (user && Object.keys(user).includes('platform') && Object.keys(user).includes('id')) {
         return user
     } else return null
 }
@@ -118,7 +127,7 @@ function getPerkExchangeUserFromIdentifyEvent(event) {
 export async function processEvent(event, meta) {
     if (event.event === '$identify') {
         // The user has been explicitly provided
-        const user = getPerkExchangeUserFromIdentifyEvent(event)
+        let user = getPerkExchangeUserFromIdentifyEvent(event)
         if (user) {
             await meta.storage.set(event.distinct_id, user)
         } else {
