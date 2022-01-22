@@ -4,7 +4,9 @@ Reward users with cryptocurrency when they perform certain actions in your app.
 
 ## Requirements
 
-1. Set the email address when identifying a user to Posthog. For example,
+1. Set the reward properties upon identifying a user to Posthog.
+
+Reward users by email:
 
 ```
 <script>
@@ -13,6 +15,17 @@ Reward users with cryptocurrency when they perform certain actions in your app.
   posthog.people.set({ email: 'user@example.com' })
 </script>
 ```
+
+Reward users by a platform and their id:
+
+```
+<script>
+  posthog.init('phc_SUS.....Lt0iB', { api_host: 'https://your.posthog.server' })
+  posthog.identify('Alice')
+  posthog.people.set({ perkexchange: {platform: 'perkexchange', id: 'username'}})
+</script>
+```
+where platform can be `github`, `twitter`, `discord`, `google`, `strava`, `stackoverflow`, or `perkexchange`. Their id values correspond to the user_id values from the respective platform. Perk.Exchange platform is unique as it requires a username.
 
 2. Create a new custom campaign at <https://perk.exchange>. Fund the campaign with [KIN cryptocurrency](https://kin.org)
 3. Generate a **campaign secret**
