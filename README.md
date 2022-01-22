@@ -1,10 +1,11 @@
 # Perk.Exchange Plugin
 
-Reward users with cryptocurrency when they perform certain actions in your app.
+Reward users with cryptocurrency when they perform certain actions in your app, powered by [Posthog](https://posthog.com/).
 
 ## Requirements
 
-1. Set the reward properties upon identifying a user to Posthog.
+1. A self-hosted Posthog instance.
+2. Set the reward properties upon identifying a user to Posthog.
 
 Reward users by email:
 
